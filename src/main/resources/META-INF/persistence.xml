@@ -1,0 +1,74 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+    http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+   version="1.0">
+
+	<persistence-unit name="ketab" transaction-type="JTA">
+	
+		<!-- oracle toplink persistence provider -->
+		<!-- 
+		<provider>oracle.toplink.essentials.PersistenceProvider</provider>
+		-->
+
+		<!-- hibernate persistence provider -->
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		
+		<!-- A managed datasource provided by the application server -->
+		<jta-data-source>java:/datasources/mySqlDS</jta-data-source>
+		
+		<!-- The path to scan for entity classes, different than the root of this file
+		<jar-file>file:/home/work/local/hibernate/jpwh/caveatemptor.jpa/build/classes</jar-file>
+		 -->
+		
+		<properties>
+		
+			<!-- hibernate configuration: START -->
+			
+			
+			<!-- Only scan and detect annotated entities -->
+			<!--
+			<property name="hibernate.archive.autodetection" value="class"/>
+			-->
+
+			<!-- Only scan and detect hbm.xml files -->
+			<!--
+			<property name="hibernate.archive.autodetection" value="hbm"/>
+			-->
+			
+			<!-- We have a JTA data source... -->
+			<!--
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/ketab"/>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+			<property name="hibernate.connection.username" value="ketabUser"/>
+			<property name="hibernate.connection.password" value="mka868"/>
+			-->
+			<property name="hibernate.c3p0.min_size" value="5"/>
+			<property name="hibernate.c3p0.max_size" value="20"/>
+			<property name="hibernate.c3p0.timeout" value="300"/>
+			<property name="hibernate.c3p0.max_statements" value="50"/>
+			<property name="hibernate.c3p0.idle_test_period" value="3000"/>
+			
+			
+			<!-- SQL stdout logging
+			-->
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+			<property name="use_sql_comments" value="true"/>
+			
+			<!-- Put the EntityManagerFactory into JNDI so we can use it manually in tests -->
+			<!--
+			<property name="jboss.entity.manager.factory.jndi.name" value="java:/EntityManagerFactories/ketabEMF"/>
+			-->
+			
+			<!-- Create the database schema when this test.persistence unit is deployed, drop
+			it (clean the database) when it is undeployed -->
+			<property name="hibernate.hbm2ddl.auto" value="drop-create"/>
+			
+			<!-- hibernate configuration: FINISH -->
+
+		</properties>
+	</persistence-unit>
+
+</persistence>

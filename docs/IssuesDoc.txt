@@ -1,0 +1,394 @@
+
+************************************************************************************
+
+	DOCUMENTATION OF ISSUES DURING THE KETAB DEVELOPMENT
+
+************************************************************************************
+
+Incorrect column specifier for column 'BOOK_ID':
+
+	SOLUTION: 	This is a MySQL error. It happened because MySQL accepts auto-increment only for integer types. In this particular case BOOK_ID was a String.
+	LINK:		http://bugs.mysql.com/bug.php?id=16760
+
+Exception in thread "main" javax.naming.NameNotFoundException: local not bound:
+
+	CODE LOCATION:	Main.java
+	CODE CAUSING ERROR: 
+		BookHandler bookHandler = (BookHandler) iContext.lookup("BookHandlerBean/local");
+
+	CAUSE:		BookHandlerBean is looked up as local while in the BookHandler interface it is declared as remote.
+	SOLUTION:	Changed the "BookHandlerBean/local" to "BookHandlerBean/remote".
+	
+
+Exception in thread "main" javax.ejb.EJBException: java.lang.ClassCastException: java.lang.String cannot be cast to org.ketab.persistence.Book:
+
+	CODE LOCATION:	BookHandlerBean.java
+	CODE CAUSING ERROR: 
+		List books = em
+				.createQuery("select bookTitle from Book b order by b.bookTitle asc")
+				.getResultList();
+				
+		System.out.println(books.size() + " book(s) found:");
+
+		for(Iterator iter = books.iterator(); iter.hasNext();){
+			Book loadBook = (Book) iter.next();
+			System.out.println(loadBook.getTitle());
+		}		
+
+	CAUSE:		The query is retrieving the bookTitle not the book itself. So when in the for loop java tries to cast the items from the books list it can't, because they are of type String.
+	SOLUTION:	Change the query so it retrieves the book itself not the bookTitle which is of type String. We do this by changing the "select bookTitle from book b..." to "select b from book b ...".
+	
+
+javax.naming.NoInitialContextException: Need to specify class name in environment or system property, or as an applet parameter, or in an application resource file:  java.naming.factory.initial
+	Cause: InitialContext was not starting because the required property (INITIAL_CONTEXT_FACTORY) need to be passed to it as a hashtable in constructor.
+	Solution: Did the following:
+			Hashtable props = new Hashtable<String, String>();
+			props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+			ctx = new InitialContext(props);
+			
+
+Caused by: java.lang.ClassNotFoundException: net.sf.cglib.proxy.CallbackFilter
+ Solution: Fixed by importingcglib-nodep library. Downloaded from sourceforge.
+
+
+java.lang.UnsupportedOperationException: Not supported by BasicDataSource
+	Solution: Changed the value of hibernate.hbm2dll.auto property to "none" in the persistence.xml.
+	
+
+javax.naming.NameNotFoundException: Name "ejbModule/BookManagerBean/BookManager" not found.
+	Solution: Changed the JNDI string parameter for lookup method to BookManagerBeanLocal. Found it from the following line in the console output:
+			INFO - Jndi(name=BookManagerBeanLocal) --> Ejb(deployment-id=BookManagerBean)
+
+
+SEVERE - CDI Beans module deployment failed
+java.lang.ClassCastException: sun.reflect.generics.reflectiveObjects.TypeVariableImpl cannot be cast to java.lang.Class
+	Solution:
+
+
+SEVERE - Application could not be deployed:  C:\Users\Khalid\git\eKetab\KetabAnnot\classpath.ear
+org.apache.openejb.OpenEJBException: Creating application failed: C:\Users\Khalid\git\eKetab\KetabAnnot\classpath.ear: org/jboss/logging/BasicLogger
+...
+Caused by: java.lang.NoClassDefFoundError: org/jboss/logging/BasicLogger
+	Solution: Removed All the other hibernate libraries from build path except the hibernate-all.jar.
+
+
+java.lang.ClassCastException: $Proxy66 cannot be cast to org.ketab.book.BookManagerBean
+	Solution: Declared the bookMgrBean using its interface (BookManager), also used the interface for casting.
+		private BookManager bookMgrBean;
+		...
+		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
+	
+	Cause: I think because OpenEjb creates the proxy using the interface.
+	Link: http://stackoverflow.com/questions/13461985/classcastexception-proxy-cannot-be-cast-to-using-aop
+	
+
+javax.persistence.PersistenceException: org.hibernate.PersistentObjectException: detached entity passed to persist
+	Cause: The entity being persisted (Book) had an id assigned to it. The persist() method of EntityManager expected that the id shouldn't be pre-assigned, it is assigned automatically. Probably because I have declared the id variable of Book entity as automatically incrementable.
+	Solution: Created the instance book entity, without an id.
+	
+
+java.lang.UnsupportedOperationException: Not supported by BasicDataSource
+	Cause: The datasource was defined in the persistenc.xml using hibernate properties. So the following two lines were causing the issue:
+		<property name="hibernate.connection.username" value="xxxx"/>
+		<property name="hibernate.connection.password" value="xxxx"/>
+	
+	Solution: Removed the datasource definition from persistence.xml and defined them in etc/openejb.xml as follows:
+			<Resource id="mySqlDS" type="DataSource">
+			  JdbcDriver com.mysql.jdbc.Driver
+			  JdbcUrl jdbc:mysql://localhost:3306/ketab
+			  UserName ketabUser
+			  Password mka868
+			  JtaManaged true
+			</Resource>
+		Then added the following line in the persistence.xml to tell the application to access the datasource:
+			<jta-data-source>java:/datasources/mySqlDS</jta-data-source>
+	Link: http://mail-archives.apache.org/mod_mbox/tomcat-users/201012.mbox/%3C521271.73661.qm@web56608.mail.re3.yahoo.com%3E
+	
+	
+javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+	java.lang.NoClassDefFoundError: antlr/ANTLRException
+	
+	Solution: Added the antlr-2.7.7.jar library to the build path.
+	
+	
+javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+	javax.persistence.PersistenceException: org.hibernate.exception.SQLGrammarException: could not insert: [org.ketab.book.Book]
+
+	Cause: I created a new attribute for the Book entity while there was no column for that in MySql db, therefore it couldn't be inserted in the db.
+	Solution: Changed the value of "hibernate.hbm2ddl.auto" to "create-drop" in persistence.xml. This recreates all the db tables, thus updating it for new structural changes.
+	
+	
+==========================================================================================================================================
+	javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+		javax.persistence.PersistenceException: org.hibernate.exception.SQLGrammarException: could not execute native bulk manipulation query
+		
+		Solution: Used transaction for those queries, which required to write to the db (e.g. "remove").
+	
+		
+		
+	javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+		java.lang.IllegalStateException: A JTA EntityManager can not use the EntityTransaction API.  See JPA 1.0 section 5.5
+	
+		
+		
+	javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+		javax.persistence.TransactionRequiredException
+	
+		
+	javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+		java.lang.IllegalStateException: container-managed transaction beans can not access the UserTransaction
+	
+		
+	javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+		java.lang.IllegalArgumentException: id to load is required for loading
+	
+		
+	javax.ejb.EJBException: The EJB started a transaction but did not complete it.
+		at org.apache.openejb.core.ivm.BaseEjbProxyHandler.convertException(BaseEjbProxyHandler.java:363)
+		...
+		Caused by: java.rmi.RemoteException: The EJB started a transaction but did not complete it.
+==========================================================================================================================================
+	CAUSE:	All these errors occured because of the wrong combination of "Transaction Management Type", "Transaction Type", and "EntityManager Type". It started with trying to remove a book entity from the db and was displaying the following error:
+
+				javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+					javax.persistence.PersistenceException: org.hibernate.exception.SQLGrammarException: could not execute native bulk manipulation query
+			
+			According to google results it was because the operations which write to the db have to use transactions.
+			After a lot of searching an trying many techniques getting all the above types of erros I learned about the how Transactions and things related to it work which I have written down in jeeNotes.txt. According to that I decided to use ContainerManagedTransaction and fixed the issue just by adding the following annotations to the class:
+
+				@TransactionManagement(TransactionManagementType.CONTAINER)
+				@TransactionAttribute(TransactionAttributeType.REQUIRED)
+			
+			This fixed the problem. However it made me very confused and makes me think wether this was really the reason for the first error. And that is that after removing these lines it still worked fine.
+			
+	LINK:	http://www.developerscrappad.com/435/java/java-ee/ejb-3-x-jpa-bean-managed-transaction-with-javax-ejb-usertransaction/
+			http://docs.oracle.com/javaee/5/tutorial/doc/bncjk.html
+			http://docs.oracle.com/javaee/6/tutorial/doc/bncii.html
+			http://geertschuring.wordpress.com/2008/10/07/how-to-use-bean-managed-transactions-with-ejb3-jpa-and-jta/
+			http://docs.oracle.com/cd/E19798-01/821-1841/bnbra/index.html
+			https://www.java.net//node/663990
+			
+
+java.lang.Error: Unresolved compilation problem: 
+	The method equalTo(String) is undefined for the type TestRoleAndRoleManager
+	Solution: Downloaded and added the hamcrest-all library to the build path.
+	
+	
+org.apache.openejb.OpenEJBRuntimeException: org.hibernate.MappingException: Unable to find column with logical name: AUTHOR_ID in org.hibernate.mapping.Table(AUTHOR) and its related supertables and secondary tables
+	Solution: Manually changed the column name "AUTHOR_ID" to "AUTHR_ID" in the Author table.
+	
+	
+WARNING - <Deployments dir="null"> - Does not exist: C:\Users\Khalid\git\eKetab\KetabAnnot\apps
+INFO - Inspecting classpath for applications: 33 urls. Consider adjusting your exclude/include.  Current settings: openejb.deployments.classpath.exclude='', openejb.deployments.classpath.include='.*'
+	
+	Explanation: The application stucks on the following lines in the console.
+	Cause: The Apacbe Batik library.
+	Solution: Edited the Manifest.MF files of batik.jar, batik-resterizer.jar, batik-slideshow.jar, batik-squiggle.jar, batik-svgapp.jar, batik-ttf2svg.jar java archives. Changed all the backslashes to forward slashes and removed the spaces in paths.
+	Link: https://issues.apache.org/bugzilla/show_bug.cgi?id=51908
+	
+	
+java.lang.NoClassDefFoundError: org/apache/fontbox/afm/AFMParser
+	at org.apache.pdfbox.pdmodel.font.PDFont.addAdobeFontMetric(PDFont.java:145)
+	...
+Caused by: java.lang.ClassNotFoundException: org.apache.fontbox.afm.AFMParser
+	Solution: Downloaded the fontbox library from pdfbox website and added it to the classpath.
+	
+
+javax.ejb.EJBException: The bean encountered a non-application exception; nested exception is: 
+	javax.persistence.PersistenceException: org.hibernate.exception.GenericJDBCException: could not insert: [org.ketab.book.Book]
+	...
+Caused by: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (13357165 > 499712). You can change this value on the server by setting the max_allowed_packet' variable.
+Cause: The size of the pdf was larger than the maximum allowed packet in MySql.
+	Solution: Set the maximum allowed packet to 30000000 in MySql using the following command:
+		set global max_allowed_packet=30000000
+		
+		
+Class not found org.ketab.tests.TestBookAndBookManagerBean
+java.lang.ClassNotFoundException: org.ketab.tests.TestBookAndBookManagerBean
+	Cause: One of the libraries added to the build path was missing.
+	Solution: Removed the missing library and re-added it from its new location.
+	
+	
+=========================================================================================================================
+INFO - Can't read the embedded font FVCSVX+Pashtoanwanfont
+INFO - Using font SansSerif.plain instead of FVCSVX+Pashtoanwanfont
+
+
+WARNING - Changing font on <?> from <IQWPFN+BLotusBold> to the default font
+=========================================================================================================================
+	Solution: 
+	Links:	http://mail-archives.apache.org/mod_mbox/pdfbox-users/201109.mbox/%3C1315873985.3846.16.camel@localhost%3E
+			http://stackoverflow.com/questions/4120567/convert-pdf-to-svg
+			http://stackoverflow.com/questions/10778550/i-want-to-show-arabic-text-from-pdf-using-pdfbox
+			http://site.icu-project.org/download/49#TOC-ICU4J-Download
+			http://stackoverflow.com/questions/16665300/setting-ttf-for-pdf-to-image-on-pdfbox
+
+
+SEVERE - Error: Could not parse predefined CMAP file for 'PDFXC-Indentity0-UCS2'
+
+
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.0:compile (default-compile) on project appanalytix: Compilation fa
+ilure
+[ERROR] ***No compiler is provided in this environment. Perhaps you are running on a JRE rather than a JDK?***
+
+	Solution: Added the JDK installed on computer in Preferences>Java>Installed JRE.
+	Link: http://stackoverflow.com/questions/15220392/maven-package-compilation-error
+
+
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\pdfbox\pdfbox\1.8.2\pdfbox-1.8.2.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\activemq\activemq-core\5.7.0\activemq-core-5.7.0.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\openejb\openejb-core\4.5.2\openejb-core-4.5.2.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\openejb\patch\openjpa-asm-shaded\2.2.0\openjpa-asm-shaded-2.2.0.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\opensaml\opensaml\2.5.1-1\opensaml-2.5.1-1.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\xalan\xalan\2.7.1\xalan-2.7.1.jar; error in opening zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\pdfbox\pdfbox\1.8.2\pdfbox-1.8.2.jar; cannot read zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\activemq\activemq-core\5.7.0\activemq-core-5.7.0.jar; cannot read zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\openejb\openejb-core\4.5.2\openejb-core-4.5.2.jar; cannot read zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\apache\openejb\patch\openjpa-asm-shaded\2.2.0\openjpa-asm-shaded-2.2.0.jar; cannot read zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\org\opensaml\opensaml\2.5.1-1\opensaml-2.5.1-1.jar; cannot read zip file
+[ERROR] error: error reading C:\Users\Khalid\.m2\repository\xalan\xalan\2.7.1\xalan-2.7.1.jar; cannot read zip file
+
+	Solution: Manually removed these libraries from the local repository "C:\Users\Khalid\.m2\repository" and downlaoded them from remote maven repository.
+	Link: http://stackoverflow.com/questions/15358851/how-to-remove-jar-file-from-local-maven-repository
+	
+	
+	
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile (default-testCompile) on project eKetab-1.0: Compilation failure: Compilation failure:
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[22,28] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:22: package org.apache.batik.dom does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[23,31] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:23: package org.apache.batik.svggen does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[24,31] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:24: package org.apache.batik.svggen does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[22,28] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:22: package org.apache.batik.dom does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[23,31] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:23: package org.apache.batik.svggen does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[24,31] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:24: package org.apache.batik.svggen does not exist
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/tests/TestBookAndBookManagerBean.java:[132,45] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\tests\TestBookAndBookManagerBean.java:132: cannot find symbol
+[ERROR] symbol  : variable GenericDOMImplementation
+	
+	Solution: Changed the artifactId of batik to from "batik" to "batik-rasterizer" in pom.
+	
+	
+	
+===============================================================================================================================================
+Tests run: 6, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 6.516 sec <<< FAILURE! - in org.ketab.tests.TestBookAndBookManagerBean
+testBookToSVG(org.ketab.tests.TestBookAndBookManagerBean)  Time elapsed: 0.016 sec  <<< ERROR!
+java.lang.Error: Unresolved compilation problems: 
+	GenericDOMImplementation cannot be resolved
+	SVGGeneratorContext cannot be resolved to a type
+	SVGGeneratorContext cannot be resolved
+	SVGGraphics2D cannot be resolved to a type
+	SVGGraphics2D cannot be resolved to a type
+	
+The type org.apache.batik.ext.awt.g2d.AbstractGraphics2D cannot be resolved. It is indirectly referenced from required .class files	
+
+
+[ERROR] java.lang.NoClassDefFoundError: org/apache/batik/util/SVGConstants
+....
+[ERROR] Caused by: java.lang.ClassNotFoundException: org.apache.batik.util.SVGConstants
+===============================================================================================================================================
+	Solution: Added the batik-rasterizer, batik-dom, batik-svggen, batik-util, and batik-awt-util dependencies to pom.
+
+
+
+WARNING - <Deployments dir="null"> - Does not exist: C:\Users\Khalid\git\eKetab\KetabAnnot\apps
+INFO - Inspecting classpath for applications: 24 urls. Consider adjusting your exclude/include.  Current settings: openejb.deployments.classpath.exclude='', openejb.deployments.classpath.include='.*'
+
+	Solution: Manualy fixed the "Claspath" entry in the MANIFEST.MF file of batik-rasterizer-1.5.jar in local maven repository.
+
+
+
+Tests run: 6, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.248 sec <<< FAILURE! - in org.ketab.tests.TestBookAndBookManagerBean
+testBookToSVG(org.ketab.tests.TestBookAndBookManagerBean)  Time elapsed: 0.794 sec  <<< ERROR!
+java.lang.NoClassDefFoundError: org/apache/batik/xml/XMLUtilities
+
+
+
+
+
+
+
+
+
+
+
+JBAS014775:    New missing/unsatisfied dependencies:
+      service jboss.naming.context.java.datasources.mySqlDS (missing) dependents: [service jboss.persistenceunit."eKetab.jar#eKetab"] 
+
+18:39:36,226 ERROR [org.jboss.as.server.deployment.scanner] (DeploymentScanner-threads - 1) {"JBAS014653: Composite operation failed and was rolled back. Steps that failed:" => {"Operation step-2" => {"JBAS014771: Services with missing/unavailable dependencies" => ["jboss.persistenceunit.\"eKetab.jar#eKetab\"jboss.naming.context.java.datasources.mySqlDSMissing[jboss.persistenceunit.\"eKetab.jar#eKetab\"jboss.naming.context.java.datasources.mySqlDS]"]}}}
+
+
+
+
+
+
+
+
+
+ERROR - HHH000389: Unsuccessful: alter table BOOK drop foreign key FK_h37bkdye941tlw86vm03qw9hf
+ERROR - Error on rename of '.\ketab\book' to '.\ketab\#sql2-1cf4-bb1' (errno: 152)
+	Cause: "Book" table already had data and it had foreign keys. When hibernate was trying to drop and create the tables it didn't like it.
+	Solution: Changed the value of "hibernate.hbm2ddl.auto" from "create-drop" to "none", so it wouldn't try to drop the tables with data and foreign keys.
+
+
+
+
+
+
+javax.naming.NoInitialContextException: Cannot instantiate class: org.jboss.naming.remote.client.InitialContextFactory [Root exception is java.lang.ClassNotFoundException: org.jboss.naming.remote.client.InitialContextFactory]
+	at javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:657)
+	...
+Caused by: java.lang.ClassNotFoundException: org.jboss.naming.remote.client.InitialContextFactory
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	...
+
+
+
+
+
+Failed to execute goal de.struller-baumann:visualee:0.25:visualize (default) on project eKetab-1.0: Execution default of goal de.struller-baumann:visualee:0.25:visualize failed: Unable to load the mojo 'visualize' in the plugin 'de.struller-baumann:visualee:0.25' due to an API incompatibility: org.codehaus.plexus.component.repository.exception.ComponentLookupException: de/strullerbaumann/visualee/maven/VisualEEMojo : Unsupported major.minor version 51.0
+
+Cause:	It seems like visualee plugin does not work with maven versions earlier than 3.
+
+
+
+
+
+[ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/user/TestRoleAndRoleManagerBean.java:[15,22] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\user\TestRoleAndRoleManagerBean.java:15: cannot find symbol
+symbol  : class Role
+location: package org.ketab.user
+
+
+
+
+Class not found org.ketab.author.TestAuthorAndAuthorManagerBean
+java.lang.ClassNotFoundException: org.ketab.author.TestAuthorAndAuthorManagerBean
+
+
+
+
+
+
+
+Missing artifact org.apache.openejb:arquillian-openejb-embedded-4:jar:1.6.0
+	Solution: Checked the dependency in the repository, and changed the version to accordingly to 4.5.2.
+
+
+
+
+javax.enterprise.inject.UnsatisfiedResolutionException: Api type [org.ketab.author.AuthorManagerBean] is not found with the qualifiers 
+
+
+
+WARNING - WARN ... 4ecb51a9-1f34-4610-ac4e-d913787ef295:	The application [4ecb51a9-1f34-4610-ac4e-d913787ef295] uses @Inject but CDI is not enabled. Maybe youd need to add a beans.xml file.
+	Solution: Created an empty beans.xml file in META-INF and added it to the JavaArchive in test case using addAsManifestResource().
+
+
+
+
+Fix the direction of text extracted from pdf to rtl:
+	https://issues.apache.org/jira/browse/PDFBOX-1361
+
+Change the encoding of extracted text:
+	https://issues.apache.org/jira/browse/PDFBOX-1039
+	
+Convert pdf to html:
+	http://java.dzone.com/articles/converting-pdf-html-using
+	

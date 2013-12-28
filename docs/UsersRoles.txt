@@ -1,0 +1,27 @@
+eLibrary Roles
+
+	1. Guest
+		- View public books.
+		- Download public books.
+
+	2. User
+		- Upload books.
+		- Remove own books.
+		- View public books.
+		- Download public books.
+		- Post reviews on books.
+		- Remove own reviews.
+		- Report books, reviews, or users.
+		- Modify own profile.
+		
+	3. Uploader
+		- All privileges of a User.
+		- Upload books in bulk, using desktop client.
+
+	4. Monitor
+		- All privileges of a User.
+		- Add/remove users, reviews, and books.
+		- Gets notifications of flagged reviews, books, and users.
+
+	1. Admin
+		- Has access to everything.

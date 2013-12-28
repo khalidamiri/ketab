@@ -1,0 +1,10 @@
+
+Move project's .git from parent folder to project folder
+
+1. Right click on the project and go to Refactor > Move.
+2. Move to any other location.
+3. Go to that folder and manually move the .git folder from its old place to the new project location (to inside the project folder).
+4. Right click on the project again in eclipse and go to Refactor > Move.
+5. Move back to its original parent folder.
+6. Right click on the project again in eclipse and go to Team > Share Project.
+7. Choose Git > Next > Choose the the current repository in the project from the list and click Finish.

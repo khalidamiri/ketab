@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues>
+	<issue id="1">
+		<date>9/17/2013</date><error>Incorrect column specifier for column 'BOOK_ID'</error><cause></cause>
+		<solution link="http://bugs.mysql.com/bug.php?id=16760">This is a MySQL error. It happened because MySQL accepts auto-increment only for integer types. In this particular case BOOK_ID was a String.</solution>
+		</issue>
+</issues>

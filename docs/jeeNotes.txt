@@ -1,0 +1,56 @@
+
+Transaction Management:
+------------------------
+
+Transaction Management Types:
+
+	(Set using @TransactionManagement(TransactionManagementType.BEAN/CONTAINER) on the session bean class.)
+	
+	1. Bean-Managed Transactions (BMT) or Application-Managed Transactions:
+		The transactions are managed manually in the bean.
+		
+	2. Container-Managed Transactions (CMT)
+		The transactions are managed automatically by container in the background.
+
+	Java Transaction API (JTA): An API that lets the user communicate with Transaction Manager.
+
+Entity Manager:
+----------------
+
+Types:
+
+	1. Application-Managed EM:
+		The Entity Manager is controlled by the user with a lot of control over it.
+		
+	2. Container-Managed EM:
+		The Entity Manager is controlled by the container. User injects it in the bean using the @PersistenceContext.
+
+
+JPA Annotations:
+----------------
+
+@ManyToMany
+
+	1. Any side can be owning side.
+	2. The side that has the @JoinTable, becomes the owning side.
+	3. The non-owning side must have mappedBy element of @ManyToMany annotation.
+	
+@ManyToOne
+
+	1. It is used on the "many" side of the ManyToOne relationship.
+	2. If the relationship is bidirectional, then the non-owner OneToMany side must have mappedBy element.
+	
+@OneToMany
+
+	1. Used on "one" side of the OneToMany relationship.
+	2. If the relationship is bidirectional, "mappedBy" element must be used.
+	
+@OneToOne
+
+	1. Any side can be owning side.
+	2. The side that has the @JoinColumn, becomes the owning side.
+	3. The non-owning side must have mappedBy element of @OneToOne annotation.
+
+@JoinTable
+
+	1. 
