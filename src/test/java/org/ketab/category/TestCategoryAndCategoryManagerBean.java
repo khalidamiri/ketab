@@ -5,13 +5,22 @@ import static org.hamcrest.core.IsEqual.*;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ketab.book.BookManager;
+import org.ketab.book.BookManagerBean;
 import org.ketab.category.Category;
 import org.ketab.category.CategoryManager;
 import org.ketab.review.Review;
@@ -19,12 +28,22 @@ import org.ketab.review.ReviewManager;
 import org.ketab.user.Role;
 import org.ketab.user.RoleManager;
 
+@RunWith(Arquillian.class)
 public class TestCategoryAndCategoryManagerBean {
 
-	InitialContext ctx;
+//	InitialContext ctx;
+	@EJB
 	CategoryManager catMb;
 	
-	@Before
+	@Deployment
+	public static JavaArchive createDeployment(){
+		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
+				.addClasses(CategoryManager.class, CategoryManagerBean.class)
+				.addAsResource("META-INF/persistence.xml");
+		return jar;
+	}
+
+/*	@Before
 	public void initialize() throws NamingException{
 		Hashtable<String, String> props = new Hashtable<String, String>();
 		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
@@ -32,6 +51,7 @@ public class TestCategoryAndCategoryManagerBean {
 		ctx = new InitialContext(props);
 		catMb = (CategoryManager)ctx.lookup("CategoryManagerBeanLocal");
 	}
+*/
 
 	@Test
 	public void testGetCat() {

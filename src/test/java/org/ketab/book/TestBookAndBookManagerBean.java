@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.imageio.ImageIO;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -34,20 +35,36 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.util.PDFImageWriter;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ketab.author.AuthorManager;
+import org.ketab.author.AuthorManagerBean;
 import org.ketab.book.Book;
 import org.ketab.book.BookManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-
+@RunWith(Arquillian.class)
 public class TestBookAndBookManagerBean{
 
-	private Context ctx;
+//	private Context ctx;
+	@EJB
 	private BookManager bookMgrBean;
-	
-	@Before
+
+	@Deployment
+	public static JavaArchive createDeployment(){
+		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
+				.addClasses(BookManager.class, BookManagerBean.class)
+				.addAsResource("META-INF/persistence.xml");
+		return jar;
+	}
+
+/*	@Before
 	public void instantiate() throws NamingException{
 		Hashtable<String, String> props = new Hashtable<String, String>();
 		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
@@ -55,7 +72,8 @@ public class TestBookAndBookManagerBean{
 		ctx = new InitialContext(props);
 		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
 	}
-
+*/
+	
 	@Test
 	public void testFind() throws IOException {
 		Book book = new Book();
@@ -66,13 +84,13 @@ public class TestBookAndBookManagerBean{
 	
 	@Test
 	public void testBinaryBookStorage() throws javax.naming.NamingException, IOException {
-		FileInputStream fis = new FileInputStream(new File("C:/Users/Khalid/Downloads/downloadss/NASIR_AHMAD_AHMADI_khonkaar.pdf"));
+		FileInputStream fis = new FileInputStream(new File("testBook.pdf"));
 		byte[] bookByte = IOUtils.toByteArray(fis);
 
 		Book book = new Book();
 		book.setBookBlob(bookByte);
 		book.setTitle("Khunkaar");
-		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
+//		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
 		System.out.println(book.getTitle());
 		bookMgrBean.addBook(book);
 
@@ -87,7 +105,7 @@ public class TestBookAndBookManagerBean{
 	public void testRemoveBook() throws IOException, NamingException{
 		Book book = new Book();
 		book.setTitle("Book to be removed");
-		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
+//		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
 		bookMgrBean.addBook(book);
 
 		bookMgrBean.delBook(book.getBookId());
@@ -99,7 +117,7 @@ public class TestBookAndBookManagerBean{
 	public void testUpdateBook() throws IOException, NamingException{
 		Book book = new Book();
 		book.setTitle("Book to be Updated");
-		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
+//		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
 		bookMgrBean.addBook(book);
 		
 		Book bookToUpdate = bookMgrBean.getBook(book.getBookId());
@@ -112,7 +130,7 @@ public class TestBookAndBookManagerBean{
 
 	@Test
 	public void testListBooks() throws IOException, NamingException{
-		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
+//		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
 		List<Book> books = bookMgrBean.listBooks("bookId", "asc");
 
 		for(int i = 0; i < books.size(); i++){

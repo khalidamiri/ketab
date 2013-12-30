@@ -5,22 +5,41 @@ import static org.hamcrest.core.IsEqual.*;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ketab.book.BookManager;
+import org.ketab.book.BookManagerBean;
 import org.ketab.user.Role;
 import org.ketab.user.RoleManager;
 
+@RunWith(Arquillian.class)
 public class TestRoleAndRoleManagerBean {
 
-	InitialContext ctx;
+//	InitialContext ctx;
+	@EJB
 	RoleManager rmb;
 	
-	@Before
+	@Deployment
+	public static JavaArchive createDeployment(){
+		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
+				.addClasses(RoleManager.class, RoleManagerBean.class)
+				.addAsResource("META-INF/persistence.xml");
+		return jar;
+	}
+
+/*	@Before
 	public void initialize() throws NamingException{
 		Hashtable<String, String> props = new Hashtable<String, String>();
 		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
@@ -28,7 +47,8 @@ public class TestRoleAndRoleManagerBean {
 		ctx = new InitialContext(props);
 		rmb = (RoleManager)ctx.lookup("RoleManagerBeanLocal");
 	}
-
+*/
+	
 	@Test
 	public void testGetRole() {
 		Role role = new Role();

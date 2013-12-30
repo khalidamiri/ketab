@@ -36,72 +36,67 @@ public class TestAuthorAndAuthorManagerBean{
 
 //	private Context ctx;
 	
-	//TODO: Make this test case run successfully. Study about CDI stuff.
-	
-	@Inject
-	@Named
-	private AuthorManagerBean authrMb;
-
 	@EJB
 	private AuthorManager authrMgr;
 	
 	@Deployment
 	public static JavaArchive createDeployment(){
 		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
-				.addClass(AuthorManager.class)
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+				.addClasses(AuthorManager.class, AuthorManagerBean.class)
+				.addAsResource("META-INF/persistence.xml");
 		return jar;
 	}
 	
-	@Before
+/*	@Before
 	public void instantiate() throws NamingException{
 		Hashtable<String, String> props = new Hashtable<String, String>();
 		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-//		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
+		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
 
-//		ctx = new InitialContext(props);
-//		authrMb = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
+		ctx = new InitialContext(props);
+		authrMgr = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
 	}
-
+*/
+	
 	@Test
 	public void testGetAuthr() throws IOException {
 		Author author = new Author();
 		author.setAuthrName("Mojawer Ahmad Ziyar");
-		authrMb.addAuthr(author);
-		assertNotNull("Should get back an author.", authrMb.getAuthr(author.getAuthrId()));
+		authrMgr.addAuthr(author);
+		assertNotNull("Should get back an author.", authrMgr.getAuthr(author.getAuthrId()));
 	}
 		
 	@Test
 	public void testDeleteAuthor() throws IOException, NamingException{
 		Author author = new Author();
 		author.setAuthrName("Author to be removed");
-//		authrMb = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
-		authrMb.addAuthr(author);
+//		authrMgr = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
+		authrMgr.addAuthr(author);
 
-		authrMb.delAuthr(author.getAuthrId());
+		authrMgr.delAuthr(author.getAuthrId());
 
-		assertNull("Shouldn't return a author with title 'Author to be removed', if 'remove' works.", authrMb.getAuthr(author.getAuthrId()));
+		assertNull("Shouldn't return a author with title 'Author to be removed', if 'remove' works.", authrMgr.getAuthr(author.getAuthrId()));
 	}
 
 	@Test
 	public void testUpdateAuthor() throws IOException, NamingException{
 		Author author = new Author();
 		author.setAuthrName("Author to be Updated");
-//		authrMb = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
-		authrMb.addAuthr(author);
+//		authrMgr = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
+		authrMgr.addAuthr(author);
 		
-		Author authorToUpdate = authrMb.getAuthr(author.getAuthrId());
+		Author authorToUpdate = authrMgr.getAuthr(author.getAuthrId());
 		authorToUpdate.setAuthrName("Author just updated");
 
-		authrMb.updateAuthr(authorToUpdate);
+		authrMgr.updateAuthr(authorToUpdate);
 		
-		assertEquals("Shouldn't return a author with title 'Author to be removed', if 'remove' works.", authrMb.getAuthr(author.getAuthrId()).getAuthrName(), authorToUpdate.getAuthrName());
+		assertEquals("Shouldn't return a author with title 'Author to be removed', if 'remove' works.", authrMgr.getAuthr(author.getAuthrId()).getAuthrName(), authorToUpdate.getAuthrName());
 	}
 
 	@Test
 	public void testListAuthors() throws IOException, NamingException{
-//		authrMb = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
-		List<Author> authors = authrMb.listAuthrs("authrId", "asc");
+//		authrMgr = (AuthorManager)ctx.lookup("AuthorManagerBeanLocal");
+		List<Author> authors = authrMgr.listAuthrs("authrId", "asc");
 
 		for(int i = 0; i < authors.size(); i++){
 			assertTrue(authors.get(i).getClass().isInstance(new Author()));

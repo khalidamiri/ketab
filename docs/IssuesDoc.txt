@@ -344,9 +344,8 @@ Caused by: java.lang.ClassNotFoundException: org.jboss.naming.remote.client.Init
 
 
 Failed to execute goal de.struller-baumann:visualee:0.25:visualize (default) on project eKetab-1.0: Execution default of goal de.struller-baumann:visualee:0.25:visualize failed: Unable to load the mojo 'visualize' in the plugin 'de.struller-baumann:visualee:0.25' due to an API incompatibility: org.codehaus.plexus.component.repository.exception.ComponentLookupException: de/strullerbaumann/visualee/maven/VisualEEMojo : Unsupported major.minor version 51.0
-
-Cause:	It seems like visualee plugin does not work with maven versions earlier than 3.
-
+	Cause:	It seems like visualee plugin does not work with maven versions earlier than 3.
+	Solution: Commented out the plugin in pom.xml.
 
 
 
@@ -354,12 +353,6 @@ Cause:	It seems like visualee plugin does not work with maven versions earlier t
 [ERROR] /C:/Users/Khalid/git/eKetab/KetabAnnot/src/test/java/org/ketab/user/TestRoleAndRoleManagerBean.java:[15,22] C:\Users\Khalid\git\eKetab\KetabAnnot\src\test\java\org\ketab\user\TestRoleAndRoleManagerBean.java:15: cannot find symbol
 symbol  : class Role
 location: package org.ketab.user
-
-
-
-
-Class not found org.ketab.author.TestAuthorAndAuthorManagerBean
-java.lang.ClassNotFoundException: org.ketab.author.TestAuthorAndAuthorManagerBean
 
 
 
@@ -374,13 +367,29 @@ Missing artifact org.apache.openejb:arquillian-openejb-embedded-4:jar:1.6.0
 
 
 javax.enterprise.inject.UnsatisfiedResolutionException: Api type [org.ketab.author.AuthorManagerBean] is not found with the qualifiers 
-
+	Cause: @Inject annotation is used for injecting CDI Managed Beans like the JSF managed beans not for session beans.
+	Solution: 
+		- Removed the @inject annotation and the reference to AuthorManagerBean.
+		- Added AuthorManager.class and AuthorManagerBean.class to the JavaArchive in createDeployment() method using addClasses() method not addClass().
+	Link: http://docs.jboss.org/arquillian/reference/1.0.0.Alpha1/en-US/html_single/#examples.ejb
 
 
 WARNING - WARN ... 4ecb51a9-1f34-4610-ac4e-d913787ef295:	The application [4ecb51a9-1f34-4610-ac4e-d913787ef295] uses @Inject but CDI is not enabled. Maybe youd need to add a beans.xml file.
 	Solution: Created an empty beans.xml file in META-INF and added it to the JavaArchive in test case using addAsManifestResource().
 
 
+
+SEVERE - FAIL ... AuthorManagerBean:	Missing required persistence.xml for @PersistenceContext ref "java:comp/env/AuthorManagerBeanLocal" to unit "ketab"
+	Solution: Added persistence.xml to the JavaArchive using .addAsResource("META-INF/persistence.xml") in the createDeployment method.
+	Link: http://arquillian.org/guides/testing_java_persistence/
+
+
+java.lang.RuntimeException: Could not invoke deployment method: public static org.jboss.shrinkwrap.api.spec.JavaArchive org.ketab.author.TestAuthorAndAuthorManagerBean.createDeployment()
+	... more
+Caused by: java.lang.IllegalArgumentException: /main/java/resources/META-INF/persistence.xml doesn't exist or can't be accessed
+	... more
+	Solution: Added persistence.xml to the JavaArchive using .addAsResource("META-INF/persistence.xml") in the createDeployment method.
+	Link: http://arquillian.org/guides/testing_java_persistence/
 
 
 Fix the direction of text extracted from pdf to rtl:
@@ -391,4 +400,12 @@ Change the encoding of extracted text:
 	
 Convert pdf to html:
 	http://java.dzone.com/articles/converting-pdf-html-using
-	
+
+
+javax.ejb.EJBTransactionRolledbackException: Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization
+	... more
+Caused by: javax.transaction.RollbackException: Unable to commit: transaction marked for rollback
+	... more
+Caused by: org.apache.geronimo.transaction.manager.SetRollbackOnlyException: setRollbackOnly() called.  See stacktrace for origin
+	... more
+

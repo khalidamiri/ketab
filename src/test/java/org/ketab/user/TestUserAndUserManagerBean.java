@@ -12,26 +12,45 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.io.IOUtils;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.ketab.book.Book;
 import org.ketab.book.BookManager;
 import org.ketab.book.BookManagerBean;
 import org.ketab.user.User;
 import org.ketab.user.UserManager;
 
-
+@RunWith(Arquillian.class)
 public class TestUserAndUserManagerBean{
 
-	private Context ctx;
+	
+	//TODO: Make this case run. Fix the issues.
+	
+
+//	private Context ctx;
+	@EJB
 	private UserManager userMgrBean;
 	
-	@Before
+	@Deployment
+	public static JavaArchive createDeployment(){
+		JavaArchive jar = ShrinkWrap.create(JavaArchive.class)
+				.addClasses(UserManager.class, UserManagerBean.class)
+				.addAsResource("META-INF/persistence.xml");
+		return jar;
+	}
+
+/*	@Before
 	public void instantiate() throws NamingException{
 		Hashtable<String, String> props = new Hashtable<String, String>();
 		props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
@@ -39,7 +58,7 @@ public class TestUserAndUserManagerBean{
 		ctx = new InitialContext(props);
 		userMgrBean = (UserManager)ctx.lookup("UserManagerBeanLocal");
 	}
-
+*/
 	
 	@Test
 	public void testGetUser() throws IOException, NoSuchAlgorithmException {
@@ -90,7 +109,7 @@ public class TestUserAndUserManagerBean{
 
 	@Test
 	public void testListUsers() throws IOException, NamingException{
-		userMgrBean = (UserManager)ctx.lookup("UserManagerBeanLocal");
+//		userMgrBean = (UserManager)ctx.lookup("UserManagerBeanLocal");
 		List<User> users = userMgrBean.listUsers("userId", "asc");
 
 		for(int i = 0; i < users.size(); i++){
