@@ -55,6 +55,8 @@ public class TestBookAndBookManagerBean{
 //	private Context ctx;
 	@EJB
 	private BookManager bookMgrBean;
+	
+	private long binaryBookId;
 
 	@Deployment
 	public static JavaArchive createDeployment(){
@@ -91,12 +93,13 @@ public class TestBookAndBookManagerBean{
 		book.setBookBlob(bookByte);
 		book.setTitle("Khunkaar");
 //		bookMgrBean = (BookManager)ctx.lookup("BookManagerBeanLocal");
-		System.out.println(book.getTitle());
 		bookMgrBean.addBook(book);
 
 		Book bookReturn = bookMgrBean.getBook(book.getBookId());
 		byte[] bookByteReturn = bookReturn.getBookBlob();
 		fis.close();
+
+		binaryBookId = book.getBookId();
 
 		assertArrayEquals("Should get back the same book as stored.", bookByteReturn, bookByte);
 	}
@@ -142,7 +145,7 @@ public class TestBookAndBookManagerBean{
 	@Test
 	public void testBookToSVG() throws IOException, PrinterException, FontFormatException{
 		
-		Book book = bookMgrBean.getBook(40);
+		Book book = bookMgrBean.getBook(binaryBookId);
 		InputStream is = new ByteArrayInputStream(book.getBookBlob());
 		PDDocument pdd = new PDDocument().load(is);
 		

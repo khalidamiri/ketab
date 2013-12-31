@@ -402,10 +402,32 @@ Convert pdf to html:
 	http://java.dzone.com/articles/converting-pdf-html-using
 
 
-javax.ejb.EJBTransactionRolledbackException: Transaction was rolled back, presumably because setRollbackOnly was called during a synchronization
+javax.persistence.PersistenceException: org.hibernate.exception.ConstraintViolationException: could not execute statement
 	... more
-Caused by: javax.transaction.RollbackException: Unable to commit: transaction marked for rollback
+Caused by: org.hibernate.exception.ConstraintViolationException: could not execute statement
 	... more
-Caused by: org.apache.geronimo.transaction.manager.SetRollbackOnlyException: setRollbackOnly() called.  See stacktrace for origin
+Caused by: com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException: Duplicate entry 'khalid' for key 'PRIMARY'
 	... more
 
+	Cause: The test case had already stored user with the same user id, so running again gives the duplicate primary key error.
+	Solution: Used random userid generator to avoid duplicate userid every time we run tests:
+		String userId = (Math.random() * 1000) + " ";
+		user.setUserId(userId);
+		while(userMgrBean.getUser(user.getUserId()) instanceof User){		// To avoid storing duplicate keys
+			userId = (Math.random() * 1000) + " ";
+		}
+	
+
+
+mysqldump: Got error: 1033: Incorrect information in file: '.\.frm' when using LOCK TABLES
+	Solution: Dropped the database causing the issue.
+
+
+ERROR 2006 (HY000) at line 9852: MySQL server has gone away
+	Solution: Added "max_allowed_packet=64M" to my.ini.
+
+	
+Foreign key issue when trying to drop tables for recreation.
+	Solution: Set the foreign key check to false using "@@global.foreign_key_checks=0" in mysql.
+	Note: The "@@var_name" syntax for system variables is supported for compatibility with some other database systems.
+	Link: http://stackoverflow.com/questions/8538636/mysql-set-foreign-key-checks

@@ -35,7 +35,7 @@ import org.ketab.user.UserManager;
 public class TestUserAndUserManagerBean{
 
 	
-	//TODO: Make this case run. Fix the issues.
+	//TODO: Make this test case run. Fix the issues.
 	
 
 //	private Context ctx;
@@ -63,7 +63,11 @@ public class TestUserAndUserManagerBean{
 	@Test
 	public void testGetUser() throws IOException, NoSuchAlgorithmException {
 		User user = new User();
-		user.setUserId("khalid");
+		String userId = (Math.random() * 1000) + " ";
+		user.setUserId(userId);
+		while(userMgrBean.getUser(user.getUserId()) instanceof User){		// To avoid storing duplicate keys
+			userId = (Math.random() * 1000) + " ";
+		}
 		user.setPassword("khalid");
 		userMgrBean.addUser(user);
 		assertNotNull("Should get back a user.", userMgrBean.getUser(user.getUserId()));
@@ -72,7 +76,11 @@ public class TestUserAndUserManagerBean{
 	@Test
 	public void testIsUserValid() throws IOException, NoSuchAlgorithmException {
 		User user = new User();
-		user.setUserId("jamshed");
+		String userId = (Math.random() * 1000) + " ";
+		user.setUserId(userId);
+		while(userMgrBean.getUser(user.getUserId()) instanceof User){		// To avoid storing duplicate keys
+			userId = (Math.random() * 1000) + " ";
+		}
 		user.setPassword("jamshed");
 		userMgrBean.addUser(user);
 				
@@ -92,9 +100,13 @@ public class TestUserAndUserManagerBean{
 	}
 
 	@Test
-	public void testUpdateBook() throws IOException, NamingException, NoSuchAlgorithmException{
+	public void testUpdateUser() throws IOException, NamingException, NoSuchAlgorithmException{
 		User user = new User();
-		user.setUserId("abed");
+		String userId = (Math.random() * 1000) + " ";
+		user.setUserId(userId);
+		while(userMgrBean.getUser(user.getUserId()) instanceof User){		// To avoid storing duplicate keys
+			userId = (Math.random() * 1000) + " ";
+		}
 		user.setPassword("abed");
 		userMgrBean.addUser(user);
 		
@@ -104,7 +116,7 @@ public class TestUserAndUserManagerBean{
 
 		userMgrBean.updateUser(userToUpdate);
 		
-		assertEquals("The passwords should match.", userMgrBean.getUser("abed").getPassword(), userToUpdate.getPassword());
+		assertEquals("The passwords should match.", userMgrBean.getUser(userId).getPassword(), userToUpdate.getPassword());
 	}
 
 	@Test
