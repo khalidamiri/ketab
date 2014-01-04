@@ -15,7 +15,7 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
 		<!-- A managed datasource provided by the application server -->
-		<jta-data-source>java:/datasources/mySqlDS</jta-data-source>
+		<jta-data-source>java:/datasources/MySqlDS</jta-data-source>
 		
 		<!-- The path to scan for entity classes, different than the root of this file
 		<jar-file>file:/home/work/local/hibernate/jpwh/caveatemptor.jpa/build/classes</jar-file>

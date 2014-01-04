@@ -4,6 +4,7 @@
   <artifactId>ketab</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>ketab</name>
+  <packaging>ear</packaging>
 
 	<dependencies>
 		<dependency>

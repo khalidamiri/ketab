@@ -431,3 +431,39 @@ Foreign key issue when trying to drop tables for recreation.
 	Solution: Set the foreign key check to false using "@@global.foreign_key_checks=0" in mysql.
 	Note: The "@@var_name" syntax for system variables is supported for compatibility with some other database systems.
 	Link: http://stackoverflow.com/questions/8538636/mysql-set-foreign-key-checks
+	
+	
+Red exclamation mark on project icon.
+	Cause: Generally it is because of problems in build path. In my case it was a missing source folder.
+	Solution:	I checked the build path and noticed that one of the source folders that no more needed and had deleted 
+				was still in the build path and was labeled as missing. So I removed it from the build path and the exclamation mark went away.
+	Link: http://stackoverflow.com/questions/6040914/what-is-the-reason-for-a-red-exclamation-mark-next-to-my-project-in-eclipse
+	
+	
+
+	
+cvc-complex-type.2.4.a: Invalid content was found starting with element 'welcom-file-list'. One of '{"http://java.sun.com/xml/ns/javaee":description, "http://java.sun.com/xml/ns/javaee":display-name, "http://
+ java.sun.com/xml/ns/javaee":icon, "http://java.sun.com/xml/ns/javaee":distributable, "http://java.sun.com/xml/ns/javaee":context-param, "http://java.sun.com/xml/ns/javaee":filter, "http://java.sun.com/xml/
+ ns/javaee":filter-mapping, "http://java.sun.com/xml/ns/javaee":listener, "http://java.sun.com/xml/ns/javaee":servlet, "http://java.sun.com/xml/ns/javaee":servlet-mapping, "http://java.sun.com/xml/ns/
+ javaee":session-config, "http://java.sun.com/xml/ns/javaee":mime-mapping, "http://java.sun.com/xml/ns/javaee":welcome-file-list, "http://java.sun.com/xml/ns/javaee":error-page, "http://java.sun.com/xml/ns/
+ javaee":jsp-config, "http://java.sun.com/xml/ns/javaee":security-constraint, "http://java.sun.com/xml/ns/javaee":login-config, "http://java.sun.com/xml/ns/javaee":security-role, "http://java.sun.com/xml/ns/
+ javaee":env-entry, "http://java.sun.com/xml/ns/javaee":ejb-ref, "http://java.sun.com/xml/ns/javaee":ejb-local-ref, "http://java.sun.com/xml/ns/javaee":service-ref, "http://java.sun.com/xml/ns/
+ javaee":resource-ref, "http://java.sun.com/xml/ns/javaee":resource-env-ref, "http://java.sun.com/xml/ns/javaee":message-destination-ref, "http://java.sun.com/xml/ns/javaee":persistence-context-ref, 
+ "http://java.sun.com/xml/ns/javaee":persistence-unit-ref, "http://java.sun.com/xml/ns/javaee":post-construct, "http://java.sun.com/xml/ns/javaee":pre-destroy, "http://java.sun.com/xml/ns/javaee":message-
+ destination, "http://java.sun.com/xml/ns/javaee":locale-encoding-mapping-list}' is expected.
+ 	Cause: Seems like it was because of the servlet version mixup between the version the project was setup with and the version web.xml was declaring.
+ 	Solution: Fixed by creating creating web descriptor automatically using eclipse.
+ 	Link: http://stackoverflow.com/questions/4008010/why-is-creating-servlets-in-eclipse-breaking-my-web-xml
+ 
+ 
+cvc-complex-type.2.4.a: Invalid content was found starting with element 'welcom-file-list'. One of '{"http://java.sun.com/xml/ns/javaee":module-name, "http://java.sun.com/xml/ns/javaee":description, "http://
+ java.sun.com/xml/ns/javaee":display-name, "http://java.sun.com/xml/ns/javaee":icon, "http://java.sun.com/xml/ns/javaee":distributable, "http://java.sun.com/xml/ns/javaee":context-param, "http://
+ java.sun.com/xml/ns/javaee":filter, "http://java.sun.com/xml/ns/javaee":filter-mapping, "http://java.sun.com/xml/ns/javaee":listener, "http://java.sun.com/xml/ns/javaee":servlet, "http://java.sun.com/xml/ns/
+ javaee":servlet-mapping, "http://java.sun.com/xml/ns/javaee":session-config, "http://java.sun.com/xml/ns/javaee":mime-mapping, "http://java.sun.com/xml/ns/javaee":welcome-file-list, "http://java.sun.com/
+ xml/ns/javaee":error-page, "http://java.sun.com/xml/ns/javaee":jsp-config, "http://java.sun.com/xml/ns/javaee":security-constraint, "http://java.sun.com/xml/ns/javaee":login-config, "http://java.sun.com/xml/
+ ns/javaee":security-role, "http://java.sun.com/xml/ns/javaee":env-entry, "http://java.sun.com/xml/ns/javaee":ejb-ref, "http://java.sun.com/xml/ns/javaee":ejb-local-ref, "http://java.sun.com/xml/ns/
+ javaee":service-ref, "http://java.sun.com/xml/ns/javaee":resource-ref, "http://java.sun.com/xml/ns/javaee":resource-env-ref, "http://java.sun.com/xml/ns/javaee":message-destination-ref, "http://
+ java.sun.com/xml/ns/javaee":persistence-context-ref, "http://java.sun.com/xml/ns/javaee":persistence-unit-ref, "http://java.sun.com/xml/ns/javaee":post-construct, "http://java.sun.com/xml/ns/javaee":pre-
+ destroy, "http://java.sun.com/xml/ns/javaee":data-source, "http://java.sun.com/xml/ns/javaee":message-destination, "http://java.sun.com/xml/ns/javaee":locale-encoding-mapping-list, "http://java.sun.com/
+ xml/ns/javaee":absolute-ordering}' is expected.
+ 
