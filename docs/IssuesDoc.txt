@@ -467,3 +467,40 @@ cvc-complex-type.2.4.a: Invalid content was found starting with element 'welcom-
  destroy, "http://java.sun.com/xml/ns/javaee":data-source, "http://java.sun.com/xml/ns/javaee":message-destination, "http://java.sun.com/xml/ns/javaee":locale-encoding-mapping-list, "http://java.sun.com/
  xml/ns/javaee":absolute-ordering}' is expected.
  
+
+ 
+ 
+org.ketab.user.TestUserAndUserManagerBean  Time elapsed: 1,571,004.872 sec  <<< ERROR!
+org.jboss.arquillian.container.spi.client.container.DeploymentException: can't deploy fa64933b-e4ae-4593-9499-280eea9a3374.jar
+	... more
+Caused by: org.apache.openejb.OpenEJBRuntimeException: javax.persistence.PersistenceException: [PersistenceUnit: ketab] Unable to build EntityManagerFactory
+	... more
+Caused by: javax.persistence.PersistenceException: [PersistenceUnit: ketab] Unable to build EntityManagerFactory
+	... more
+Caused by: org.hibernate.HibernateException: Connection cannot be null when 'hibernate.dialect' not set
+	... more
+	Cause: MySQL was not running.
+	Solution: Started MySQL.
+	
+	
+	
+org.ketab.review.TestReviewAndReviewManagerBean  Time elapsed: 1,572,380.409 sec  <<< ERROR!
+org.jboss.arquillian.container.spi.client.container.DeploymentException: Could not deploy to container: {"JBAS014671: Failed services" => {"jboss.deployment.unit.\"f199c916-fe25-436e-9fd6-98195dedfef2.jar\".POST_MODULE" => "org.jboss.msc.service.StartException in service jboss.deployment.unit.\"f199c916-fe25-436e-9fd6-98195dedfef2.jar\".POST_MODULE: Failed to process phase POST_MODULE of deployment \"f199c916-fe25-436e-9fd6-98195dedfef2.jar\""}}
+	Cause: standalone.xml
+	Solution: Changed the port-offset attribute of socket-binding-group element from zero to 100 in standalone.xml.
+	Link: http://stackoverflow.com/questions/9681466/arquillian-test-execution-fails-with-jboss-7-1-and-vanilla-jboss-kitchensink-exa
+	
+10:04:03,069 INFO  [org.jboss.weld.ClassLoading] (MSC service thread 1-4) catching: org.jboss.weld.resources.spi.ResourceLoadingException: Error loading class org.ketab.book.ExtractImages
+	... more
+Caused by: java.lang.NoClassDefFoundError: org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial
+	... more
+Caused by: java.lang.ClassNotFoundException: org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial from [Module "deployment.ketab.war:main" from Service Module Loader]
+	... more
+	
+	
+	
+The FacesServlet cannot have a url-pattern of /*. Please define a different url-pattern.
+	
+	
+Can't find bundle for base name org.ketab.messages, locale ps
+	

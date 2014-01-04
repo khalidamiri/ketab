@@ -4,7 +4,6 @@
   <artifactId>ketab</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>ketab</name>
-  <packaging>ear</packaging>
 
 	<dependencies>
 		<dependency>
@@ -58,11 +57,6 @@
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>2.1</version>
-		</dependency>
 	    <dependency>
 	    	<groupId>mysql</groupId>
 	    	<artifactId>mysql-connector-java</artifactId>
@@ -72,25 +66,25 @@
 
 	<profiles>
 		<profile>
-				<id>arquillian-openejb</id>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.openejb</groupId>
-				<artifactId>arquillian-openejb-embedded-4</artifactId>
-				<version>4.5.2</version>
-				<scope>test</scope>
-			</dependency>
-		    <dependency>
-		      <groupId>org.hibernate</groupId>
-		      <artifactId>hibernate-core</artifactId>
-		      <version>4.2.5.Final</version>
-		    </dependency>
-		    <dependency>
-		      <groupId>org.hibernate</groupId>
-		      <artifactId>hibernate-entitymanager</artifactId>
-		      <version>4.2.5.Final</version>
-		    </dependency>
-		</dependencies>
+			<id>arquillian-openejb</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.openejb</groupId>
+					<artifactId>arquillian-openejb-embedded-4</artifactId>
+					<version>4.5.2</version>
+					<scope>test</scope>
+				</dependency>
+			    <dependency>
+			      <groupId>org.hibernate</groupId>
+			      <artifactId>hibernate-core</artifactId>
+			      <version>4.2.5.Final</version>
+			    </dependency>
+			    <dependency>
+			      <groupId>org.hibernate</groupId>
+			      <artifactId>hibernate-entitymanager</artifactId>
+			      <version>4.2.5.Final</version>
+			    </dependency>
+			</dependencies>
 		</profile>
 		
 		<profile>
@@ -105,28 +99,43 @@
 		        </dependency>
 		        <dependency>
 		            <groupId>org.jboss.as</groupId>
-		            <artifactId>jboss-as-arquillian-container-remote</artifactId>
+		            <artifactId>jboss-as-arquillian-container-managed</artifactId>
 		            <version>7.1.1.Final</version>
 		            <scope>test</scope>
 		        </dependency>
+			    <dependency>
+			    	<groupId>org.jboss.arquillian.junit</groupId>
+			    	<artifactId>arquillian-junit-container</artifactId>
+			    	<version>1.1.1.Final</version>
+			    	<scope>test</scope>
+			    </dependency>
+			<dependency>
+			    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+			    <artifactId>shrinkwrap-resolver-bom</artifactId>
+			    <version>2.0.0-beta-5</version>
+			    <scope>test</scope>
+			    <type>pom</type>
+			</dependency>
+		        <!--
 		        <dependency>
 		            <groupId>org.jboss.arquillian.protocol</groupId>
 		            <artifactId>arquillian-protocol-servlet</artifactId>
 		            <scope>test</scope>
 		        </dependency>
+		        -->
 		    </dependencies>
 		</profile>
 	</profiles>
 
 	<dependencyManagement>
 	    <dependencies>
-		<dependency>
-		    <groupId>org.jboss.shrinkwrap.resolver</groupId>
-		    <artifactId>shrinkwrap-resolver-bom</artifactId>
-		    <version>2.0.0-beta-5</version>
-		    <scope>test</scope>
-		    <type>pom</type>
-		</dependency>
+			<dependency>
+			    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+			    <artifactId>shrinkwrap-resolver-bom</artifactId>
+			    <version>2.0.0-beta-5</version>
+			    <scope>test</scope>
+			    <type>pom</type>
+			</dependency>
 	        <dependency>
 	            <groupId>org.jboss.arquillian</groupId>
 	            <artifactId>arquillian-bom</artifactId>
@@ -134,12 +143,12 @@
 	            <scope>import</scope>
 	            <type>pom</type>
 	        </dependency>
-		    <dependency>
-		    	<groupId>org.jboss.arquillian.junit</groupId>
-		    	<artifactId>arquillian-junit-container</artifactId>
-		    	<version>1.1.1.Final</version>
-		    	<scope>test</scope>
-		    </dependency>
+			    <dependency>
+			    	<groupId>org.jboss.arquillian.junit</groupId>
+			    	<artifactId>arquillian-junit-container</artifactId>
+			    	<version>1.1.1.Final</version>
+			    	<scope>test</scope>
+			    </dependency>
 	    </dependencies>
 	</dependencyManagement>
 	
