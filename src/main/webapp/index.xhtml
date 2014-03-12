@@ -4,5 +4,9 @@
 	<h:head>
 		<title>کانکور</title>
 	</h:head>
-	<h:body>ښه راغلاست.</h:body>
+	<h:body>
+		#{books.getBook(1).bookId}<br />
+		#{books.getBook(1).bookTitle}<br />
+		#{books.getBook(1).bookBlob}
+	</h:body>
 </html>

@@ -132,7 +132,6 @@
 			<dependency>
 			    <groupId>org.jboss.shrinkwrap.resolver</groupId>
 			    <artifactId>shrinkwrap-resolver-bom</artifactId>
-			    <version>2.0.0-beta-5</version>
 			    <scope>test</scope>
 			    <type>pom</type>
 			</dependency>
@@ -146,7 +145,6 @@
 			    <dependency>
 			    	<groupId>org.jboss.arquillian.junit</groupId>
 			    	<artifactId>arquillian-junit-container</artifactId>
-			    	<version>1.1.1.Final</version>
 			    	<scope>test</scope>
 			    </dependency>
 	    </dependencies>
